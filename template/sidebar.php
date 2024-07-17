@@ -29,21 +29,21 @@
                     </a>
                     <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="<?= $main_url ?>layout-static.php">Siswa</a>
-                            <a class="nav-link" href="<?= $main_url ?>layout-sidenav-light.php">Guru</a>
+                            <a class="nav-link" href="<?= $main_url ?>absen/absensi_guru.php">Guru</a>
+                            <a class="nav-link" href="<?= $main_url ?>absen/absensi_siswa.php">Siswa</a>
                         </nav>
                     </div>
                     <hr class="mb-0">
                     <div class="sb-sidenav-menu-heading">Data</div>
-                    <a class="nav-link" href="<?= $main_url ?>charts.php">
+                    <a class="nav-link" href="<?= $main_url ?>guru/manage-guru.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-user"></i></div>
                         Guru
                     </a>
-                    <a class="nav-link" href="<?= $main_url ?>tables.php">
+                    <a class="nav-link" href="<?= $main_url ?>siswa/manage_siswa.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                         Siswa
                     </a>
-                    <a class="nav-link" href="<?= $main_url ?>tables.php">
+                    <a class="nav-link" href="<?= $main_url ?>mapel/manage_mapel.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
                         Mata pelajaran
                     </a>

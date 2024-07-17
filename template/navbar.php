@@ -18,8 +18,8 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#!">User Profile</a></li>
                         <li><a class="dropdown-item" href="#!">School profile</a></li>
-                        <li><a class="dropdown-item" href="user/add-user.php">Add User</a></li>
-                        <li><a class="dropdown-item" href="Sekolah/add-sekolah.php">Add school</a></li>
+                        <li><a class="dropdown-item" href="<?= $main_url ?>user/add-user.php">Add User</a></li>
+                        <li><a class="dropdown-item" href="<?= $main_url ?>Sekolah/add-sekolah.php">Add school</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="#!">Logout</a></li>
                     </ul>

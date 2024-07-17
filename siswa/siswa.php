@@ -1,5 +1,5 @@
 <?php
-class Guru {
+class Siswa {
     private $servername = "localhost";
     private $username = "root";
     private $password = "";
@@ -20,7 +20,7 @@ class Guru {
     }
 
     public function read() {
-        $sql = "SELECT * FROM tb_guru ";
+        $sql = "SELECT * FROM tb_siswa ";
         $result = $this->conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -35,9 +35,9 @@ class Guru {
 
     }
 
-    public function create($nip, $nama, $alamat, $telpon, $agama, $foto)
+    public function create($nama, $kelas, $alamat, $jurusan, $foto)
     {
-        $targetDir = "upload_event/";
+        $targetDir = "foto_siswa/";
         $targetFile = $targetDir . basename($foto["name"]);      
 
         $uploadOk = 1;
@@ -71,12 +71,12 @@ class Guru {
             echo "File" . basename($foto["name"]) . "file berhasil diunggah . ";
         } else{
             echo "maaf terjadi kesalahan ";
-
+ 
         }
 
-        $foto_name = $targetFile;
+        $foto_name = basename($foto["name"]);
         
-        $sql = "INSERT INTO `tb_guru` (`id`, 'nip', `nama`,, 'alamat', `telpon` `agama`, `foto`) VALUES (NULL, '$nip', '$nama', $alamat, '$telpon', '$agama', '$foto')";
+        $sql = "INSERT INTO `tb_siswa` (`id`, `nama`, `kelas`, `alamat`, `jurusan`, `foto`) VALUES (NULL, '$nama', '$kelas', '$alamat', '$jurusan', '$foto_name')";
         $result = $this->conn->query($sql);
 
         if ($result === true) {
@@ -84,11 +84,11 @@ class Guru {
         } else {
             $_SESSION['message'] = "data failed to add" . $this->conn->error;
         }
-        return header('location: event.php');
+        return header('location: manage_siswa.php');
     }
 
     public function search($keyword) {    
-        $sql = "SELECT * FROM `tb_guru` WHERE `nama` LIKE '%$keyword%' OR `status` LIKE '%$keyword%' OR `nip` LIKE '%$keyword%'";
+        $sql = "SELECT * FROM `user` WHERE `nama` LIKE '%$keyword%' OR `status` LIKE '%$keyword%' OR `username` LIKE '%$keyword%'";
         $result = $this->conn->query($sql);
     
             if ($result->num_rows > 0) {
@@ -106,7 +106,7 @@ class Guru {
     public function get()
     {
         $id = $_GET['id'];
-        $sql = "SELECT * FROM tb_guru WHERE id=$id";
+        $sql = "SELECT * FROM tb_siswa WHERE id=$id";
         $result = $this->conn->query($sql);
         if ($result->num_rows > 0) {
             $data = array();
@@ -121,9 +121,9 @@ class Guru {
 
     }
 
-    public function edit($id, $nip, $nama, $alamat, $telpon, $agama, $foto)
+    public function edit($id, $nama, $kelas, $alamat, $jurusan, $foto)
     {
-        $sql = "UPDATE `tb_guru` SET nip = '$nip', nama = '$nama', alamat = '$alamat', telpon = '$telpon', agama = '$agama', foto = '$foto' WHERE id=$id";
+        $sql = "UPDATE `tb_siswa` SET nama = '$nama', kelas = '$kelas', alamat = '$alamat',  jurusan = '$jurusan', foto= '$foto' WHERE id=$id";
         $result = $this->conn->query($sql);
 
         if ($result === true) {
@@ -136,18 +136,17 @@ class Guru {
     }
 
     public function delete($id) {
-    
+      
         $id = $_GET['id']; 
-
-        $sql = "DELETE FROM tb_guru WHERE id=$id";
-        $result = $this->conn->query($sql);
-        if ( $result === true) {
-            $_SESSION['message'] = "Data berhasil dihapus";
-        } else {
-            $_SESSION['message'] = "Gagal menghapus data: " . $this->conn->error;
-        }
-        return header('location: siswa.php');
-    }
+ 
+         $sql = "DELETE FROM tb_siswa WHERE id=$id";
+         $result = $this->conn->query($sql);
+         if ( $result === true) {
+             $_SESSION['message'] = "Data berhasil dihapus";
+         } else {
+             $_SESSION['message'] = "Gagal menghapus data: " . $this->conn->error;
+         }
+         return header('location: manage_siswa.php');
+     }
 }
-
 ?>

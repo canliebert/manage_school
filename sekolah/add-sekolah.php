@@ -12,7 +12,7 @@ session_start();
 
             <div class="card">
                 <form action="add-user.php?param=createUser" method="post" enctype="multipart/form-data">
-                <div class="card-header">
+                <div class="card-header p-3">
                     <span class="fw-bold"><i class="fas fa-square-plus"></i> Add School</span>
                     <button type="submit" class="btn btn-primary float-end " name="save" style="margin-left: 5px;">save <i class="fas fa-floppy-disk"></i></button>
                     <button type="reset" class="btn btn-danger float-end " name="reset" >reset <i class="fas fa-rotate-right"></i></button>
@@ -23,7 +23,7 @@ session_start();
                         echo '</div>';
                         unset($_SESSION['message']); // Hapus pesan setelah ditampilkan
                         }
-                    ?>
+                    ?> 
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4 text-center px-5">
