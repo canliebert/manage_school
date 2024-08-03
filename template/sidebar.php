@@ -35,7 +35,7 @@
                     </div>
                     <hr class="mb-0">
                     <div class="sb-sidenav-menu-heading">Data</div>
-                    <a class="nav-link" href="<?= $main_url ?>guru/manage-guru.php">
+                    <a class="nav-link" href="<?= $main_url ?>guru/manage_guru.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-user"></i></div>
                         Guru
                     </a>

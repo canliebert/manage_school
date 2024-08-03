@@ -9,15 +9,17 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Form Daftar Hadir</h1>
-        <form action="absensi.php" method="POST">
+        <form action="absen/pr_absen.php?param=hadir_siswa" method="POST">
+            <div class="mb-3">
+                <label for="nama" class="form-label">Nama Siswa</label>
+                <input type="text" class="form-control" id="nama" name="nama" required>
+            </div>
             <div class="mb-3">
                 <label for="nis" class="form-label">NIS Siswa</label>
                 <input type="text" class="form-control" id="nis" name="nis" required>
             </div>
             <div class="mb-3">
-                <label for="nip" class="form-label">NIP Guru</label>
-                <input type="text" class="form-control" id="nip" name="nip" required>
-            </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>

@@ -7,6 +7,7 @@ if (isset($_GET['param'])) {
     switch ($_GET['param']) {
         case 'create':
             $classfunction->create(
+                $_POST['nis'],
                 $_POST['nama'],
                 $_POST['kelas'],
                 $_POST['alamat'],
@@ -17,6 +18,7 @@ if (isset($_GET['param'])) {
         case 'edit':
             $classfunction->edit(
                 $_POST['id'],
+                $_POST['nis'],
                 $_POST['nama'],
                 $_POST['kelas'],
                 $_POST['alamat'],

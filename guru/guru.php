@@ -37,54 +37,61 @@ class Guru {
 
     public function create($nip, $nama, $alamat, $telepon, $agama, $foto)
     {
+        // Pengecekan NIS
+        $cek_nip = $this->conn->query("SELECT * FROM tb_siswa WHERE nip = '$nip'");
+        if (mysqli_num_rows($cek_nip) > 0) {
+            $_SESSION['message'] = "NIS sudah ada di dalam database.";
+            return header('location: edit_guru.php');
+        }
+
         $targetDir = "foto_guru/";
-        $targetFile = $targetDir . basename($foto["name"]);      
-
         $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $imageFileType = strtolower(pathinfo($foto["name"], PATHINFO_EXTENSION));
+        $foto_name = hash('sha256', time() . $foto["name"]) . '.' . $imageFileType;  // Membuat nama file unik
+        $targetFile = $targetDir . $foto_name;
 
-        if($foto != null){
+        if ($foto != null) {
             $check = getimagesize($foto["tmp_name"]);
-            if($check !== false){
-                echo "file adalah foto - " . $check["mime"] . ".";
+            if ($check !== false) {
+                echo "File adalah foto - " . $check["mime"] . ".";
                 $uploadOk = 1;
             } else {
-                echo "file bukan foto. ";
+                echo "File bukan foto.";
                 $uploadOk = 0;
             }
         }
 
-        if($foto["size"] > 100000){
-            $check = getimagesize($foto["tmp_name"]);
-                echo "maaf ukuran file terlalu besar";
-                $uploadOk = 0;
-        }
-
-        if(
-            $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-        ) {
-            echo "maaf, hanya folder tertentu yang bisa di upload";
+        if ($foto["size"] > 100000) {
+            echo "Maaf, ukuran file terlalu besar.";
             $uploadOk = 0;
         }
 
-        if(move_uploaded_file($foto["tmp_name"], $targetFile)){
-            echo "File" . basename($foto["name"]) . "file berhasil diunggah . ";
-        } else{
-            echo "maaf terjadi kesalahan ";
-
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+            echo "Maaf, hanya file JPG, JPEG, & PNG yang diperbolehkan.";
+            $uploadOk = 0;
         }
 
-        $foto_name =  basename($foto["name"]);
-        
-        $sql = "INSERT INTO `tb_guru` (`id`, `nip`, `nama`, `alamat`, `telepon`, `agama`, `foto`) VALUES (NULL, '$nip', '$nama', '$alamat', '$telepon', '$agama', '$foto_name')";
-        $result = $this->conn->query($sql);
+        if ($uploadOk == 1) {
+            if (move_uploaded_file($foto["tmp_name"], $targetFile)) {
+                echo "File " . basename($foto["name"]) . " berhasil diunggah.";
 
-        if ($result === true) {
-            $_SESSION['message'] = "data added successfully ";
+                $sql = "INSERT INTO `tb_siswa` (`id`, `nip`, `nama`, `alamat`, `telepon`, `agama`, `foto`, `absen_id`) VALUES (NULL, ?, ?, ?, ?, ?, ?, '1')";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->bind_param('ssssss', $nip, $nama, $alamat, $telepon, $agama, $foto_name);
+
+                if ($stmt->execute()) {
+                    $_SESSION['message'] = "Data berhasil ditambahkan.";
+                } else {
+                    $_SESSION['message'] = "Data gagal ditambahkan: " . $this->conn->error;
+                }
+            } else {
+                echo "Maaf, terjadi kesalahan saat mengunggah file.";
+            }
         } else {
-            $_SESSION['message'] = "data failed to add" . $this->conn->error;
+            echo "Maaf, file tidak diunggah.";
         }
-        return header('location: manage-guru.php');
+
+        return header('location: manage_guru.php');
     }
 
     public function search($keyword) {    
@@ -121,18 +128,70 @@ class Guru {
 
     }
 
-    public function edit($id, $nip, $nama, $alamat, $telpon, $agama, $foto)
+    public function edit($id, $nip, $nama, $alamat, $telepon, $agama, $foto)
     {
-        $sql = "UPDATE `tb_guru` SET nip = '$nip', nama = '$nama', alamat = '$alamat', telpon = '$telpon', agama = '$agama', foto = '$foto' WHERE id=$id";
-        $result = $this->conn->query($sql);
+        // Ambil data siswa untuk mendapatkan foto lama
+        $sql = "SELECT foto FROM tb_siswa WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $data = $result->fetch_assoc();
+            $foto_lama = $data['foto'];
+            
+            $uploadOk = 1;
+            $targetDir = "foto_guru/";
+            $foto_name = $foto_lama; // Default to old photo if no new photo uploaded
 
-        if ($result === true) {
-            $_SESSION['message'] = "data updated successfully";
+            if ($foto && $foto['tmp_name']) {
+                $imageFileType = strtolower(pathinfo($foto["name"], PATHINFO_EXTENSION));
+                $foto_name = hash('sha256', time() . $foto["name"]) . '.' . $imageFileType;  // Membuat nama file unik
+                $targetFile = $targetDir . $foto_name;
+
+                $check = getimagesize($foto["tmp_name"]);
+                if ($check !== false) {
+                    if ($foto["size"] > 1000000) { // Mengubah batas ukuran menjadi 1MB
+                        $_SESSION['message'] = "Maaf, ukuran file terlalu besar.";
+                        $uploadOk = 0;
+                    }
+
+                    if (!in_array($imageFileType, ["jpg", "jpeg", "png"])) {
+                        $_SESSION['message'] = "Maaf, hanya file JPG, JPEG, & PNG yang diperbolehkan.";
+                        $uploadOk = 0;
+                    }
+
+                    if ($uploadOk && move_uploaded_file($foto["tmp_name"], $targetFile)) {
+                        // Hapus file foto lama dari direktori jika ada foto baru
+                        if ($foto_lama && file_exists($targetDir . $foto_lama)) {
+                            unlink($targetDir . $foto_lama);
+                        }
+                    } else {
+                        $_SESSION['message'] = "Maaf, terjadi kesalahan saat mengunggah file.";
+                        return header('Location: edit_guru.php');
+                    }
+                } else {
+                    $_SESSION['message'] = "File bukan foto.";
+                    return header('Location: edit_guru.php');
+                }
+            }
+
+            // Update data siswa di database
+            $sql = "UPDATE `tb_siswa` SET `nip` = ?, `nama` = ?, `alamat` = ?, `telepon` = ?, `agama` = ?, `foto` = ? WHERE `id` = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param('ssssssi', $nip, $nama, $alamat, $telepon, $agama, $foto_name, $id);
+
+            if ($stmt->execute()) {
+                $_SESSION['message'] = "Data berhasil diperbarui.";
+            } else {
+                $_SESSION['message'] = "Data gagal diperbarui: " . $this->conn->error;
+            }
         } else {
-            $_SESSION['message'] = "data failed to update" . $this->conn->error;
+            $_SESSION['message'] = "Data siswa tidak ditemukan.";
         }
-        return header('location: user.php');
 
+        return header('Location: manage_guru.php');
     }
 
     public function delete($id) {
@@ -146,7 +205,7 @@ class Guru {
         } else {
             $_SESSION['message'] = "Gagal menghapus data: " . $this->conn->error;
         }
-        return header('location: siswa.php');
+        return header('location: manage_guru.php');
     }
 }
 

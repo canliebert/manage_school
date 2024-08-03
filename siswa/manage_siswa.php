@@ -1,9 +1,14 @@
 <?php 
-include('siswa.php'); 
+include('siswa.php');
+session_start();
+
+$message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
+unset($_SESSION['message']);
 
 $siswa = new Siswa();
 $datasiswa = $siswa->read();
-include('../template/header.php'); 
+
+include('../template/header.php');
 ?>
  
 <div id="layoutSidenav_content ms-auto">
@@ -16,9 +21,11 @@ include('../template/header.php');
                 <a type="button" class="btn btn-primary ms-auto tambah" data-bs-toggle="modal" data-bs-target="#formtambah">Tambah User <i class="fa fa-user-plus"></i></a>
             </ol>
             <div class="card mb-4">
+                <?php if($message) : ?>
                 <div class="card-body">
-                    When scrolling, the navigation stays at the top of the page. This is the end of the static navigation demo.
+                <?= htmlspecialchars($message); ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="row text-center">
@@ -30,7 +37,7 @@ include('../template/header.php');
                         <span class="small text-uppercase text-muted"><?= $siswa['jurusan']; ?></span>
                         <ul class="social mb-0 list-inline mt-3">
                             <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-circle-info"></i></a></li>
-                            <li class="list-inline-item"><a href="index.php?id=<?= $siswa['id']; ?>" class="social-link ubah" data-bs-toggle="modal" data-bs-target="#formUbah"><i class="fa fa-pen-to-square"></i></a></li>
+                            <li class="list-inline-item"><a href="edit_siswa.php?id=<?= $siswa['id']; ?>" class="social-link ubah" ><i class="fa fa-pen-to-square"></i></a></li>
                             <li class="list-inline-item"><a href="pr_siswa.php?param=delete&id=<?= $siswa['id']; ?>" class="social-link"><i class="fa fa-trash"></i></a></li>
                         </ul>
                     </div>
@@ -51,6 +58,10 @@ include('../template/header.php');
                     <form action="pr_siswa.php?param=create" method="post" enctype="multipart/form-data">
                         <input type="hidden" id="id" name="id">
                         <div class="mb-3">
+                            <label for="nis" class="form-label">NIS</label>
+                            <input type="number" id="nis" class="form-control" name="nis" placeholder="input">
+                        </div>
+                        <div class="mb-3">
                             <label for="nama" class="form-label">Nama</label>
                             <input type="text" id="nama" class="form-control" name="nama" placeholder="input">
                         </div>
@@ -60,9 +71,9 @@ include('../template/header.php');
                         </div>
                         <div class="mb-3">
                             <label for="alamat" class="form-label">Alamat</label>
-                            <input type="text" id="alamat" class="form-control" name="alamat" placeholder="input">
+                            <textarea type="text" id="alamat" cols="30" rows="3" class="form-control" name="alamat" placeholder="input"></textarea>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3">xaa
                             <select class="form-select border-0 border-bottom" aria-label="Default select example" id="jurusan" name="jurusan" required>
                                 <option selected>Pilih Jurusan</option>
                                 <option value="Multimedia">Multimedia</option>
@@ -97,6 +108,10 @@ include('../template/header.php');
                         <?php $detail = $siswa->get($_GET['id']); ?>
                         <form action="pr_siswa.php?param=update" method="post" enctype="multipart/form-data">
                             <input type="hidden" id="id" name="id" value="<?= $detail['id']; ?>">
+                            <div class="mb-3">
+                                <label for="nis" class="form-label">NIS</label>
+                                <input type="text" id="nis" class="form-control" name="nis" value="<?= $detail['nis']; ?>">
+                            </div>
                             <div class="mb-3">
                                 <label for="nama" class="form-label">Nama</label>
                                 <input type="text" id="nama" class="form-control" name="nama" value="<?= $detail['nama']; ?>">

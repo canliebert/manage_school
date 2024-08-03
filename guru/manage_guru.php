@@ -4,6 +4,7 @@ $guru = new Guru();
 
 // Ambil data guru
 $dataGuru = $guru->read();
+$message = isset($_SESSION['message']) ? $_SESSION['message'] : null; // Initialize $message variable
 include('../template/header.php'); ?>
  
 
@@ -18,7 +19,13 @@ include('../template/header.php'); ?>
                     <a type="button" class="btn btn-primary ms-auto tambah" data-bs-toggle="modal" data-bs-target="#formtambah">Tambah User <i class="fa fa-user-plus"></i></a>
 
                 </ol>
-                <div class="card mb-4"><div class="card-body">When scrolling, the navigation stays at the top of the page. This is the end of the static navigation demo.</div></div>
+                <div class="card mb-4">
+                <?php if($message) : ?>
+                <div class="card-body">
+                <?= htmlspecialchars($message); ?>
+                </div>
+                <?php endif; ?>
+            </div>
             </div>
             <div class="row text-center">
                 <!-- Team item -->
